@@ -56,3 +56,4 @@ src/
 - Food journal / document tracking
 - Background sync
 - Light/dark theme switcher
+# recipely-
