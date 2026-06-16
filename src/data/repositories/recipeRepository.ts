@@ -1,11 +1,13 @@
 import { eq, like, or } from 'drizzle-orm';
-import { db } from '../db/client';
-import { categories, dayRecipe, recipeDetail, recipes } from '../db/schema';
+import { Platform } from 'react-native';
 import { mealdbApi } from '../api/mealdbApi';
 import { toCategory, toRecipe, toRecipeDetail } from '../api/mappers';
+import { db } from '../db/client';
+import { categories, dayRecipe, recipeDetail, recipes } from '../db/schema';
 
 // Mirrors data/repository/recipe/RecipeRepositoryImpl.kt#refreshDatabase (categories step)
 export async function refreshCategories() {
+  if (Platform.OS === 'web') return;
   const response = await mealdbApi.getCategories();
 
   for (const dto of response.categories) {
@@ -19,6 +21,7 @@ export async function refreshCategories() {
 
 // Mirrors the per-category recipe fetch in RecipeRepositoryImpl.kt#refreshDatabase
 export async function refreshCategoryRecipes(categoryId: string, categoryTitle: string) {
+  if (Platform.OS === 'web') return;
   const response = await mealdbApi.getCategoryRecipes(categoryTitle);
 
   for (const dto of response.meals ?? []) {
@@ -32,6 +35,7 @@ export async function refreshCategoryRecipes(categoryId: string, categoryTitle: 
 
 // Mirrors RecipeRepositoryImpl.kt#getRecipeDetail — fetches and caches on miss.
 export async function ensureRecipeDetail(id: string) {
+  if (Platform.OS === 'web') return undefined;
   const existing = db.select().from(recipeDetail).where(eq(recipeDetail.recipeId, id)).get();
   if (existing) return existing;
 
@@ -50,6 +54,7 @@ export async function ensureRecipeDetail(id: string) {
 
 // Mirrors RecipeRepositoryImpl.kt#getDayRecipe — "Recipe of the Day".
 export async function ensureDayRecipe() {
+  if (Platform.OS === 'web') return undefined;
   const existing = db.select().from(dayRecipe).get();
   if (existing) return existing;
 
@@ -71,6 +76,7 @@ export async function ensureDayRecipe() {
 // Mirrors RecipeRepositoryImpl.kt#generateRandomRecipe — fetches and caches a fresh
 // random recipe, used by Home's "Random Recipe" prompt.
 export async function fetchRandomRecipeDetail() {
+  if (Platform.OS === 'web') throw new Error('Not available on web');
   const response = await mealdbApi.getRandomRecipe();
   const dto = response.meals?.[0];
   if (!dto) throw new Error('No random recipe available');
@@ -92,6 +98,7 @@ export interface SearchFilters {
 }
 
 export async function searchRecipes(term: string, filters: SearchFilters) {
+  if (Platform.OS === 'web') return [];
   const trimmed = term.trim();
   if (!trimmed) return [];
 

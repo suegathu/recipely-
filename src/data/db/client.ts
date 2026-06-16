@@ -1,14 +1,34 @@
-import { openDatabaseSync } from 'expo-sqlite';
-import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { sql } from 'drizzle-orm';
+import { drizzle, useLiveQuery as drizzleLiveQuery } from 'drizzle-orm/expo-sqlite';
+import { openDatabaseSync } from 'expo-sqlite';
+import { Platform } from 'react-native';
 import * as schema from './schema';
 
-const expoDb = openDatabaseSync('plitso.db', { enableChangeListener: true });
+// On web, SQLite is unavailable — return empty data so screens render without crashing.
+export const useLiveQuery: typeof drizzleLiveQuery = Platform.OS === 'web'
+  ? (_query: any, _deps?: any[]) => ({ data: [] as any, updatedAt: undefined, error: undefined })
+  : drizzleLiveQuery;
 
-export const db = drizzle(expoDb, { schema });
+// expo-sqlite's sync WASM driver requires SharedArrayBuffer which isn't
+// available in browsers without special server headers. Skip on web so the
+// app renders (UI/navigation work; data features are no-ops in browser).
+const expoDb = Platform.OS !== 'web'
+  ? openDatabaseSync('plitso.db', { enableChangeListener: true })
+  : (null as unknown as ReturnType<typeof openDatabaseSync>);
+
+// On web, return a chainable no-op Proxy so db.select().from(...) etc.
+// don't throw — the useLiveQuery stub above ignores the query anyway.
+const webDbStub: any = new Proxy({}, {
+  get: (_t, prop) => prop === 'then' ? undefined : () => webDbStub,
+});
+
+export const db = Platform.OS !== 'web'
+  ? drizzle(expoDb, { schema })
+  : (webDbStub as ReturnType<typeof drizzle<typeof schema>>);
 
 // Bootstraps tables on startup, mirroring Room's auto-create-on-first-run.
 export function initDatabase() {
+  if (Platform.OS === 'web') return;
   expoDb.execSync(`
     CREATE TABLE IF NOT EXISTS categories (
       category_id TEXT PRIMARY KEY NOT NULL,
