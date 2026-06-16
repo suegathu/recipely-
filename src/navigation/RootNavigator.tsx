@@ -8,8 +8,6 @@ import type { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// Mirrors presentation/navigation/Navigation.kt — bottom-tab screens plus
-// Recipes/RecipeDetail/Search pushed on top from any tab.
 export function RootNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

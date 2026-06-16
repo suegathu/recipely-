@@ -43,3 +43,12 @@ export const dayRecipe = sqliteTable('day_recipe', {
   image: text('image').notNull(),
   updatedDate: integer('updated_date').notNull(),
 });
+
+// Shopping list items, scoped per Firebase user.
+export const shoppingItems = sqliteTable('shopping_items', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull(),
+  text: text('text').notNull(),
+  checked: integer('checked', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at').notNull(),
+});

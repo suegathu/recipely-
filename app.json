@@ -29,7 +29,8 @@
       "expo-sqlite",
       "expo-image",
       "expo-status-bar",
-      "expo-web-browser"
+      "expo-web-browser",
+      "expo-image-picker"
     ]
   }
 }

@@ -67,6 +67,14 @@ export function initDatabase() {
       image TEXT NOT NULL,
       updated_date INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS shopping_items (
+      id TEXT PRIMARY KEY NOT NULL,
+      user_id TEXT NOT NULL,
+      text TEXT NOT NULL,
+      checked INTEGER NOT NULL DEFAULT 0,
+      created_at INTEGER NOT NULL
+    );
   `);
 }
 
