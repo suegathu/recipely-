@@ -1,5 +1,8 @@
 import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+// @ts-expect-error getReactNativePersistence exists at runtime but is missing from the type declarations
+import { getAuth, initializeAuth, getReactNativePersistence } from 'firebase/auth';
+import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -11,4 +14,18 @@ const firebaseConfig = {
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-export const auth = getAuth(app);
+
+function getOrInitAuth() {
+  if (Platform.OS === 'web') {
+    return getAuth(app);
+  }
+  try {
+    return initializeAuth(app, {
+      persistence: getReactNativePersistence(ReactNativeAsyncStorage),
+    });
+  } catch {
+    return getAuth(app);
+  }
+}
+
+export const auth = getOrInitAuth();

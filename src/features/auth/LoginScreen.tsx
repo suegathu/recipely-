@@ -33,9 +33,11 @@ export function LoginScreen() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const [request, response, promptAsync] = Google.useAuthRequest({
-    webClientId: GOOGLE_WEB_CLIENT_ID,
-  });
+  const [request, response, promptAsync] = Google.useAuthRequest(
+    Platform.OS === 'web' || GOOGLE_WEB_CLIENT_ID
+      ? { webClientId: GOOGLE_WEB_CLIENT_ID, iosClientId: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID }
+      : { clientId: '' },
+  );
 
   useEffect(() => {
     if (response?.type === 'success') {

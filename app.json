@@ -2,6 +2,7 @@
   "expo": {
     "name": "Recipely",
     "slug": "recipely",
+    "scheme": "recipely",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -26,11 +27,7 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "expo-sqlite",
-      "expo-image",
-      "expo-status-bar",
-      "expo-web-browser",
-      "expo-image-picker"
+      "expo-sqlite"
     ]
   }
 }
