@@ -114,15 +114,26 @@ export function RecipeDetailScreen() {
       </ScrollView>
 
       <View style={[styles.footer, { backgroundColor: theme.colors.surface, borderTopColor: theme.colors.outlineVariant }]}>
-        <Button
-          mode={bookmarked ? 'contained' : 'outlined'}
-          icon={bookmarked ? 'bookmark' : 'bookmark-outline'}
-          onPress={handleBookmark}
-          style={styles.bookmarkBtn}
-          contentStyle={styles.bookmarkBtnContent}
-        >
-          {bookmarked ? 'Saved' : 'Save recipe'}
-        </Button>
+        <View style={styles.footerRow}>
+          <Button
+            mode={bookmarked ? 'contained' : 'outlined'}
+            icon={bookmarked ? 'bookmark' : 'bookmark-outline'}
+            onPress={handleBookmark}
+            style={[styles.bookmarkBtn, { flex: 1 }]}
+            contentStyle={styles.bookmarkBtnContent}
+          >
+            {bookmarked ? 'Saved' : 'Save'}
+          </Button>
+          <Button
+            mode="contained"
+            icon="cart-plus"
+            onPress={() => navigation.navigate('RecipeIngredientShop', { recipeId: recipe.recipeId })}
+            style={[styles.bookmarkBtn, { flex: 2 }]}
+            contentStyle={styles.bookmarkBtnContent}
+          >
+            Buy Ingredients
+          </Button>
+        </View>
       </View>
     </View>
   );
@@ -151,6 +162,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
+  footerRow: { flexDirection: 'row', gap: 8 },
   bookmarkBtn: { borderRadius: 8 },
   bookmarkBtnContent: { height: 48 },
 });
