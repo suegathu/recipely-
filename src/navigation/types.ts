@@ -3,7 +3,7 @@ import type { NavigatorScreenParams } from '@react-navigation/native';
 // Mirrors presentation/navigation/Screen.kt — bottom-nav destinations
 export type RootTabParamList = {
   Home: undefined;
-  Document: undefined;
+  Shop: undefined;
   Bookmarks: undefined;
   Account: undefined;
 };
@@ -15,6 +15,23 @@ export type RootStackParamList = {
   Recipes: { categoryId: string; categoryName: string };
   RecipeDetail: { recipeId: string };
   Search: undefined;
+
+  // Marketplace
+  ProductDetail: { productId: string };
+  Cart: undefined;
+  Checkout: undefined;
+  CheckoutAddress: undefined;
+  CheckoutShipping: undefined;
+  CheckoutPayment: { orderId: string; paymentUrl: string };
+  CheckoutConfirmation: { orderId: string };
+  OrderHistory: undefined;
+  OrderDetail: { orderId: string };
+  OrderTracking: { orderId: string };
+  VendorRegister: undefined;
+  VendorProfile: { vendorId: string };
+  AddressBook: undefined;
+  AddressForm: { addressId?: string };
+  RecipeIngredientShop: { recipeId: string };
 };
 
 declare global {
