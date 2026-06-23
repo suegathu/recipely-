@@ -1,11 +1,28 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Avatar, Button, Divider, Text, useTheme } from 'react-native-paper';
 import { useBookmarks } from '../../data/repositories/bookmarkRepository';
+import type { RootStackParamList } from '../../navigation/types';
 import { useAuthStore } from '../../store/authStore';
+
+type Nav = NativeStackNavigationProp<RootStackParamList>;
+
+function MenuRow({ icon, label, onPress }: { icon: keyof typeof MaterialIcons.glyphMap; label: string; onPress: () => void }) {
+  const theme = useTheme();
+  return (
+    <Pressable onPress={onPress} style={styles.menuRow}>
+      <MaterialIcons name={icon} size={24} color={theme.colors.onSurface} />
+      <Text variant="bodyLarge" style={{ flex: 1 }}>{label}</Text>
+      <MaterialIcons name="chevron-right" size={24} color={theme.colors.onSurfaceVariant} />
+    </Pressable>
+  );
+}
 
 export function AccountScreen() {
   const theme = useTheme();
+  const navigation = useNavigation<Nav>();
   const { user, signOut } = useAuthStore();
   const bookmarks = useBookmarks();
 
@@ -14,7 +31,7 @@ export function AccountScreen() {
     : user?.email?.[0].toUpperCase() ?? '?';
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={styles.profile}>
         {user?.photoURL ? (
           <Avatar.Image size={80} source={{ uri: user.photoURL }} />
@@ -44,6 +61,14 @@ export function AccountScreen() {
 
       <Divider style={styles.divider} />
 
+      <View style={styles.menu}>
+        <MenuRow icon="receipt-long" label="Order History" onPress={() => navigation.navigate('OrderHistory')} />
+        <MenuRow icon="location-on" label="My Addresses" onPress={() => navigation.navigate('AddressBook')} />
+        <MenuRow icon="storefront" label="Become a Vendor" onPress={() => navigation.navigate('VendorRegister')} />
+      </View>
+
+      <Divider style={styles.divider} />
+
       <Button
         mode="outlined"
         onPress={signOut}
@@ -52,7 +77,7 @@ export function AccountScreen() {
       >
         Sign out
       </Button>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -64,5 +89,7 @@ const styles = StyleSheet.create({
   stats: { flexDirection: 'row', justifyContent: 'center' },
   stat: { alignItems: 'center', gap: 4 },
   statNumber: { fontWeight: 'bold' },
-  signOutBtn: { marginTop: 'auto' },
+  menu: { gap: 4 },
+  menuRow: { flexDirection: 'row', alignItems: 'center', gap: 16, paddingVertical: 14, paddingHorizontal: 4 },
+  signOutBtn: { marginBottom: 32 },
 });
